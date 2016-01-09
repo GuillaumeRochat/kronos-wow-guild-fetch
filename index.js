@@ -15,7 +15,7 @@ ref.authWithCustomToken(process.env.FIREBASE_AUTH, function(error, authData) {
                 country: 'blablabla'
             }
         });
-       process.exit(0);
+        process.exit(0);
     }
 });
 
