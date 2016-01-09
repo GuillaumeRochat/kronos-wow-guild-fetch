@@ -86,21 +86,6 @@ describe('_/models/character', function() {
         expect(notInt.get('guildRank')).to.be(null);
     });
 
-    it('returns true if no model value if null', function() {
-        var hasNull = new Character();
-        var notHasNull = new Character();
-
-        notHasNull.setName('name');
-        notHasNull.setClass('warrior');
-        notHasNull.setRace('human');
-        notHasNull.setGender('male');
-        notHasNull.setLevel(60);
-        notHasNull.setGuildRank(0);
-
-        expect(hasNull.isValid()).to.be(false);
-        expect(notHasNull.isValid()).to.be(true);
-    });
-
     it('returns null if not valid character', function() {
         var valid = new Character();
         var notValid = new Character();

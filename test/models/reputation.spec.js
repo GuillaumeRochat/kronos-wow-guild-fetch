@@ -46,17 +46,5 @@ describe('_/models/reputation', function() {
         expect(intAbove.get('level')).to.be(null);
         expect(notInt.get('level')).to.be(null);
     });
-
-    it('returns true if no model value is null', function() {
-        var hasNull = new Reputation();
-        var notHasNull = new Reputation();
-
-        notHasNull.setName('stormwind');
-        notHasNull.setCharacterName('characterName');
-        notHasNull.setLevel(42999);
-
-        expect(hasNull.isValid()).to.be(false);
-        expect(notHasNull.isValid()).to.be(true);
-    });
 });
 

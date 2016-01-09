@@ -51,18 +51,5 @@ describe('_/models/activity', function() {
         expect(iso.get('datetime')).to.be('1970-01-01T12:12:12Z');
         expect(notIso.get('datetime')).to.be(null);
     });
-
-    it('returns true if no model value is null', function() {
-        var hasNull = new Activity();
-        var notHasNull = new Activity();
-
-        notHasNull.setType('loot');
-        notHasNull.setId(1);
-        notHasNull.setCharacterName('characterName');
-        notHasNull.setDatetime('1970-01-01T00:00:00Z');
-
-        expect(hasNull.isValid()).to.be(false);
-        expect(notHasNull.isValid()).to.be(true);
-    });
 });
 

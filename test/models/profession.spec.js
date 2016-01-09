@@ -46,17 +46,5 @@ describe('_/models/profession', function() {
         expect(intAbove.get('level')).to.be(null);
         expect(notInt.get('level')).to.be(null);
     });
-
-    it('returns true if no model value is null', function() {
-        var hasNull = new Profession();
-        var notHasNull = new Profession();
-
-        notHasNull.setName('mining');
-        notHasNull.setCharacterName('characterName');
-        notHasNull.setLevel(300);
-
-        expect(hasNull.isValid()).to.be(false);
-        expect(notHasNull.isValid()).to.be(true);
-    });
 });
 
