@@ -12,11 +12,10 @@ Fetches data from the [Twinstar armory](http://armory.twinstar.cz/) and send the
 The project will be placed in lib/ with individual modules for each logical part. It will be divided as follow:
 
 ##### lib/models/
+- activity.js
 - character.js
 - profession.js
 - reputation.js
-- item.js
-- bosskill.js
 
 ##### lib/scraper/
 - index.js
