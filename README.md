@@ -1,4 +1,6 @@
 # Kronos Wow Guild Fetch
+
+[![Join the chat at https://gitter.im/KaivoAnastetiks/kronos-wow-guild-fetch](https://badges.gitter.im/KaivoAnastetiks/kronos-wow-guild-fetch.svg)](https://gitter.im/KaivoAnastetiks/kronos-wow-guild-fetch?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Circle CI](https://circleci.com/gh/KaivoAnastetiks/kronos-wow-guild-fetch.svg?style=svg)](https://circleci.com/gh/KaivoAnastetiks/kronos-wow-guild-fetch)
 [![Stories in Ready](https://badge.waffle.io/KaivoAnastetiks/kronos-wow-guild-fetch.svg?label=ready&title=Ready)](http://waffle.io/KaivoAnastetiks/kronos-wow-guild-fetch)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/54726acfefab4934ba6775ff5247e758)](https://www.codacy.com/app/kaivoanastetiks_2547/kronos-wow-guild-fetch)
