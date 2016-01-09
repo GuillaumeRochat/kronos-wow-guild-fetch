@@ -4,7 +4,7 @@
   "description": "Fetches data from the kronos-wow armory and twinhead for a specified guild.\"",
   "main": "index.js",
   "engines": {
-      "node": "5.4.0"
+    "node": "5.4.0"
   },
   "scripts": {
     "postinstall": "cd node_modules/; rm -f _; ln -s ../lib _",
@@ -21,7 +21,8 @@
   },
   "homepage": "https://github.com/kaivoanastetiks/kronos-wow-guild-fetch#readme",
   "dependencies": {
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "moment": "^2.11.1"
   },
   "devDependencies": {
     "expect.js": "^0.3.1",
