@@ -1,15 +1,8 @@
 {
-  "name": "kronos-wow-guild-fetch",
+  "name": "kronos-wow-guild-fetch:fetch",
   "version": "0.0.1",
   "description": "Fetches data from the kronos-wow armory and twinhead for a specified guild.\"",
   "main": "index.js",
-  "engines": {
-    "node": "5.4.0"
-  },
-  "scripts": {
-    "postinstall": "cd node_modules/; rm -f _; ln -s ../lib _",
-    "test": "mocha \"test/**/*.spec.js\""
-  },
   "repository": {
     "type": "git",
     "url": "git://github.com/kaivoanastetiks/kronos-wow-guild-fetch.git"
@@ -21,13 +14,8 @@
   },
   "homepage": "https://github.com/kaivoanastetiks/kronos-wow-guild-fetch#readme",
   "dependencies": {
-    "lodash": "^3.10.1",
-    "moment": "^2.11.1"
-  },
-  "devDependencies": {
-    "expect.js": "^0.3.1",
-    "mocha": "^2.3.4",
-    "nock": "^5.2.1",
-    "sinon": "^1.17.2"
+    "bluebird": "^3.1.1",
+    "cheerio": "^0.19.0",
+    "request-promise": "^1.0.2"
   }
 }
