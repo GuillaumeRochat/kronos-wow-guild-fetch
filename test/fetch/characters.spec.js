@@ -6,6 +6,8 @@ var Character = require('_/models/character');
 var Characters = require('_/fetch/characters');
 
 const URL = 'http://example.com';
+const REALM = 'realm';
+const GUILD_NAME = 'guildName';
 const REPLY = `
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="_layout/guild/roster.xsl"?>
@@ -32,7 +34,7 @@ before(function() {
 beforeEach(function() {
    nock(URL)
        .get('/guild-info.xml')
-       .query({ r: 'realm', gn: 'guildName' })
+       .query({ r: REALM, gn: GUILD_NAME })
        .reply(200, REPLY);
 });
 
@@ -41,15 +43,7 @@ afterEach(function() {
 });
 
 describe('_/fetch/characters', function() {
-    it('throws exception if no URL or guildName', function() {
-        var closure = function() {
-            var characters = new Characters();
-        };
-
-        expect(closure).to.throwError();
-    });
-
-    it('throw exception if URL or guildName is not string', function() {
+    it('throw exception if URL, realm or guildName is not string', function() {
         var closure = function() {
             var characters = new Characters(1, 2, 3);
         };
@@ -57,16 +51,16 @@ describe('_/fetch/characters', function() {
         expect(closure).to.throwError();
     });
 
-    it('sets the url and guildName', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+    it('sets the url, realm and guildName', function() {
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         expect(characters.url).to.be(URL);
-        expect(characters.realm).to.be('realm');
-        expect(characters.guildName).to.be('guildName');
+        expect(characters.realm).to.be(REALM);
+        expect(characters.guildName).to.be(GUILD_NAME);
     });
 
     it('calls the fetch function when calling getData', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
         var spy = sinon.spy(characters, 'fetch');
 
         return characters.getData().then(function() {
@@ -75,7 +69,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('calls the parse function when calling getData', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
         var spy = sinon.spy(characters, 'parse');
 
         return characters.getData().then(function() {
@@ -84,19 +78,23 @@ describe('_/fetch/characters', function() {
     });
 
     it('replaces the guildName spaces with + signs in getQuery', function() {
-        var characters = new Characters(URL, 'realm', 'guild name with spaces');
+        var characters = new Characters(URL, REALM, 'guild name with spaces');
 
-        expect(characters.getQuery()).to.be(URL + '/guild-info.xml?r=realm&gn=guild+name+with+spaces');
+        var query = characters.getQuery();
+
+        expect(query).to.be(URL + '/guild-info.xml?r=' + REALM + '&gn=guild+name+with+spaces');
     });
 
     it('replaces the realm spaces with + signs in getQuery', function() {
-        var characters = new Characters(URL, 'realm name with spaces', 'guildName');
+        var characters = new Characters(URL, 'realm name with spaces', GUILD_NAME);
 
-        expect(characters.getQuery()).to.be(URL + '/guild-info.xml?r=realm+name+with+spaces&gn=guildName');
+        var query = characters.getQuery();
+
+        expect(query).to.be(URL + '/guild-info.xml?r=realm+name+with+spaces&gn=' + GUILD_NAME);
     });
 
     it('performs the request of the query', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         return characters.fetch().then(function(response) {
             expect(response).to.be(REPLY);
@@ -104,7 +102,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns an array of Character objects', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var characterData = characters.parse(REPLY);
 
@@ -116,7 +114,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('sets the character name from the node in the model', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var charactersData = characters.parse(REPLY);
 
@@ -125,7 +123,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('sets the character class from the node in the model', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var charactersData = characters.parse(REPLY);
 
@@ -134,7 +132,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('sets the character race from the node in the model', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var charactersData = characters.parse(REPLY);
 
@@ -143,7 +141,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('sets the character level from the node in the model', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var charactersData = characters.parse(REPLY);
 
@@ -152,7 +150,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('sets the character guild rank from the node in the model', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var charactersData = characters.parse(REPLY);
 
@@ -161,7 +159,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns null if class id is not found', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var className = characters.getClass(100);
 
@@ -169,7 +167,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns the class name corresponding to the id', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var warrior = characters.getClass(1);
         var paladin = characters.getClass(2);
@@ -179,7 +177,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns null if race id is not found', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var raceName = characters.getRace(100);
 
@@ -187,7 +185,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns the race name corresponding to the id', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var human = characters.getRace(1);
         var orc = characters.getRace(2);
@@ -197,7 +195,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns null if gender id is not found', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var genderName = characters.getGender(100);
 
@@ -205,7 +203,7 @@ describe('_/fetch/characters', function() {
     });
 
     it('returns the gender name corresponding to the id', function() {
-        var characters = new Characters(URL, 'realm', 'guildName');
+        var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var male = characters.getGender(0);
         var female = characters.getGender(1);
