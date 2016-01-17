@@ -4,10 +4,10 @@
   "description": "Fetches data from the kronos-wow armory and twinhead for a specified guild.\"",
   "main": "index.js",
   "engines": {
-    "node": "5.4.0"
+    "node": "5.4.1"
   },
   "scripts": {
-    "postinstall": "cd node_modules/; rm -f _; ln -s ../lib _",
+    "postinstall": "node -e \"var s='../lib',d='node_modules/_',fs=require('fs');fs.exists(d,function(d2){d2||fs.symlinkSync(s,d,'dir')});\"",
     "test": "mocha \"test/**/*.spec.js\""
   },
   "repository": {
