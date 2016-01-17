@@ -113,13 +113,13 @@ describe('_/fetch/characters', function() {
         });
     });
 
-    it('sets the character name from the node in the model', function() {
+    it('sets the character name from the node in the model in lowerCase', function() {
         var characters = new Characters(URL, REALM, GUILD_NAME);
 
         var charactersData = characters.parse(REPLY);
 
-        expect(charactersData[0].get('name')).to.be('Nameone');
-        expect(charactersData[1].get('name')).to.be('Nametwo');
+        expect(charactersData[0].get('name')).to.be('nameone');
+        expect(charactersData[1].get('name')).to.be('nametwo');
     });
 
     it('sets the character class from the node in the model', function() {

@@ -137,17 +137,17 @@ describe('_/fetch/professions', function() {
         });
     });
 
-    it('sets the character name provided in the search in the model', function() {
+    it('sets the character name provided in the search in the model in lowerCase', function() {
         var professions = new Professions(URL, REALM, CHARACTER_NAME);
 
         var professionsData = professions.parse(REPLY);
 
         professionsData.forEach(function(profession) {
-            expect(profession.get('characterName')).to.be(CHARACTER_NAME);
+            expect(profession.get('characterName')).to.be(CHARACTER_NAME.toLowerCase());
         });
     });
 
-    it('sets the profession leve from the node in the model', function() {
+    it('sets the profession level from the node in the model', function() {
         var professions = new Professions(URL, REALM, CHARACTER_NAME);
 
         var professionsData = professions.parse(REPLY);
