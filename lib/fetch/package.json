@@ -1,5 +1,5 @@
 {
-  "name": "kronos-wow-guild-fetch:fetch",
+  "name": "kronos-wow-guild-fetch-fetch",
   "version": "0.0.1",
   "description": "Fetches data from the kronos-wow armory and twinhead for a specified guild.\"",
   "main": "index.js",

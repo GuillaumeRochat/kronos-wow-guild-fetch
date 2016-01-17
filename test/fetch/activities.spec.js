@@ -52,38 +52,12 @@ describe('_/fetch/activities', function() {
         expect(activities.characterName).to.be(CHARACTER_NAME);
     });
 
-    it('calls the fetch function when calling getData', function() {
-        var activities = new Activities(URL, REALM, CHARACTER_NAME);
-        var spy = sinon.spy(activities, 'fetch');
-
-        return activities.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
-    it('calls the parse function when calling getData', function() {
-        var activities = new Activities(URL, REALM, CHARACTER_NAME);
-        var spy = sinon.spy(activities, 'parse');
-
-        return activities.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
     it('replaces the realm spaces with + signs in getQuery', function() {
         var activities = new Activities(URL, 'realm name with spaces', CHARACTER_NAME);
 
         var query = activities.getQuery();
 
         expect(query).to.be(URL + '/character-feed.xml?r=realm+name+with+spaces&cn=' + CHARACTER_NAME);
-    });
-
-    it('performs the request of the query when calling fetch', function() {
-        var activities = new Activities(URL, REALM, CHARACTER_NAME);
-
-        return activities.fetch().then(function(response) {
-            expect(response).to.be(REPLY);
-        });
     });
 
     it('returns an array of Activity objects when calling parse', function() {

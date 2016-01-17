@@ -59,24 +59,6 @@ describe('_/fetch/characters', function() {
         expect(characters.guildName).to.be(GUILD_NAME);
     });
 
-    it('calls the fetch function when calling getData', function() {
-        var characters = new Characters(URL, REALM, GUILD_NAME);
-        var spy = sinon.spy(characters, 'fetch');
-
-        return characters.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
-    it('calls the parse function when calling getData', function() {
-        var characters = new Characters(URL, REALM, GUILD_NAME);
-        var spy = sinon.spy(characters, 'parse');
-
-        return characters.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
     it('replaces the guildName spaces with + signs in getQuery', function() {
         var characters = new Characters(URL, REALM, 'guild name with spaces');
 
@@ -91,14 +73,6 @@ describe('_/fetch/characters', function() {
         var query = characters.getQuery();
 
         expect(query).to.be(URL + '/guild-info.xml?r=realm+name+with+spaces&gn=' + GUILD_NAME);
-    });
-
-    it('performs the request of the query', function() {
-        var characters = new Characters(URL, REALM, GUILD_NAME);
-
-        return characters.fetch().then(function(response) {
-            expect(response).to.be(REPLY);
-        });
     });
 
     it('returns an array of Character objects', function() {

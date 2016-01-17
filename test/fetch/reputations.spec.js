@@ -57,38 +57,12 @@ describe('_/fetch/reputations', function() {
         expect(reputations.characterName).to.be(CHARACTER_NAME);
     });
 
-    it('calls the fetch function when calling getData', function() {
-        var reputations = new Reputations(URL, REALM, CHARACTER_NAME);
-        var spy = sinon.spy(reputations, 'fetch');
-
-        return reputations.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
-    it('calls the parse function when calling getData', function() {
-        var reputations = new Reputations(URL, REALM, CHARACTER_NAME);
-        var spy = sinon.spy(reputations, 'parse');
-
-        return reputations.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
     it('replaces the realm spaces with + signs in getQuery', function() {
         var reputations = new Reputations(URL, 'realm name with spaces', CHARACTER_NAME);
 
         var query = reputations.getQuery();
 
         expect(query).to.be(URL + '/character-reputation.xml?r=realm+name+with+spaces&cn=' + CHARACTER_NAME);
-    });
-
-    it('performs the request of the query when calling fetch', function() {
-        var reputations = new Reputations(URL, REALM, CHARACTER_NAME);
-
-        return reputations.fetch().then(function(response) {
-            expect(response).to.be(REPLY);
-        });
     });
 
     it('returns an array of Reputation objects when calling parse', function() {

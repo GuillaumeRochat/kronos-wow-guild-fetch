@@ -62,38 +62,12 @@ describe('_/fetch/professions', function() {
         expect(professions.characterName).to.be(CHARACTER_NAME);
     });
 
-    it('calls the fetch function when calling getData', function() {
-        var professions = new Professions(URL, REALM, CHARACTER_NAME);
-        var spy = sinon.spy(professions, 'fetch');
-
-        return professions.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
-    it('calls the parse function when calling getData', function() {
-        var professions = new Professions(URL, REALM, CHARACTER_NAME);
-        var spy = sinon.spy(professions, 'parse');
-
-        return professions.getData().then(function() {
-            expect(spy.calledOnce).to.be(true);
-        });
-    });
-
     it('replaces the realm spaces with + signs in getQuery', function() {
         var professions = new Professions(URL, 'realm name with spaces', CHARACTER_NAME);
 
         var query = professions.getQuery();
 
         expect(query).to.be(URL + '/character-sheet.xml?r=realm+name+with+spaces&cn=' + CHARACTER_NAME);
-    });
-
-    it('performs the request of the query when calling fetch', function() {
-        var professions = new Professions(URL, REALM, CHARACTER_NAME);
-
-        return professions.fetch().then(function(response) {
-            expect(response).to.be(REPLY);
-        });
     });
 
     it('returns an array of Profession objects when calling parse', function() {
