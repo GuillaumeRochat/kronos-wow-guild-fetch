@@ -26,8 +26,8 @@ before(function() {
 
 beforeEach(function() {
     nock(URL)
-        .get('/character-feed.xml')
-        .query({ r: REALM, cn: CHARACTER_NAME })
+        .get('/character-feed-data.xml')
+        .query({ r: REALM, cn: CHARACTER_NAME, full: 'true' })
         .reply(200, REPLY);
 });
 
@@ -57,7 +57,7 @@ describe('_/fetch/activities', function() {
 
         var query = activities.getQuery();
 
-        expect(query).to.be(URL + '/character-feed.xml?r=realm+name+with+spaces&cn=' + CHARACTER_NAME);
+        expect(query).to.be(URL + '/character-feed-data.xml?r=realm+name+with+spaces&cn=' + CHARACTER_NAME + '&full=true');
     });
 
     it('returns an array of Activity objects when calling parse', function() {
