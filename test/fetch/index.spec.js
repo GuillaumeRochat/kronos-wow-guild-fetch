@@ -66,8 +66,8 @@ describe('_/fetch', function() {
 
     it('returns a Promise when calling getActivities', function() {
         nock(URL)
-            .get('/character-feed.xml')
-            .query({ r: REALM, cn: CHARACTER_NAME })
+            .get('/character-feed-data.xml')
+            .query({ r: REALM, cn: CHARACTER_NAME, full: 'true' })
             .reply(200, REPLY);
         var fetch = new Fetch(REALM);
 
