@@ -13,6 +13,7 @@ const REPLY = `
 <feed today="31.12.2015" yesterday="Dec 30, 2015" time="00:00:00" v="0.8">
     <event type="bosskill" date="31.12.2015" time="12:12:12" id="14510" points="0" sort="earlier">
         <character name="Charactername" characterUrl="r=Realm&amp;cn=Charactername"/>
+        <desc>Killed boss [<a href="https://vanilla-twinhead.twinstar.cz/?npc=14510"><span class="boss">BossName</span></a>][<a href="https://vanilla-twinhead.twinstar.cz/?boss-kill=123456"><span class="boss">detail</span></a>]</desc>
     </event>
     <event type="loot" date="31.12.2015" time="21:21:21" icon="inv_misc_cape_19" id="22337" slot="-1" sort="earlier">
         <character name="Charactername" characterUrl="r=Realm&amp;cn=Charactername"/>
@@ -96,6 +97,15 @@ describe('_/fetch/activities', function() {
         var activitiesData = activities.parse(REPLY);
 
         expect(activitiesData[0].get('characterName')).to.be(CHARACTER_NAME.toLowerCase());
+    });
+
+    it('sets the bossKillID provided in the search in the model', function() {
+        var activities = new Activities(URL, REALM, CHARACTER_NAME);
+
+        var activitiesData = activities.parse(REPLY);
+
+        expect(activitiesData[0].get('bossKillID')).to.be(123456);
+        expect(activitiesData[1].get('bossKillID')).to.be(null);
     });
 
     it('sets the datetime from the node in the model in ISO-8601 UTC', function() {

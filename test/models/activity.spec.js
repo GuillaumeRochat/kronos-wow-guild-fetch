@@ -41,6 +41,20 @@ describe('_/models/activity', function() {
         expect(notString.get('characterName')).to.be(null);
     });
 
+    it('sets the bosskill ID if above 0', function() {
+        var intBelow = new Activity();
+        var intAbove = new Activity();
+        var notInt = new Activity();
+
+        intBelow.setBossKillID(0);
+        intAbove.setBossKillID(1);
+        notInt.setBossKillID('bossKillID');
+
+        expect(intBelow.get('bossKillID')).to.be(null);
+        expect(intAbove.get('bossKillID')).to.be(1);
+        expect(notInt.get('bossKillID')).to.be(null);
+    });
+
     it('sets the datime if valid ISO-8601 at UTC time', function() {
         var iso = new Activity();
         var notIso = new Activity();
