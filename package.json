@@ -7,6 +7,7 @@
     "node": "5.4.1"
   },
   "scripts": {
+    "preinstall": "node bin/preinstall",
     "postinstall": "node -e \"var s='../lib',d='node_modules/_',fs=require('fs');fs.exists(d,function(d2){d2||fs.symlinkSync(s,d,'dir')});\"",
     "test": "mocha \"test/**/*.spec.js\""
   },
