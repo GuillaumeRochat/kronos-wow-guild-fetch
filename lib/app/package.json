@@ -1,0 +1,19 @@
+{
+  "name": "kronos-wow-guild-fetch-app",
+  "version": "0.0.1",
+  "description": "Handles the whole app logic to fetch and save data.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kaivoanastetiks/kronos-wow-guild-fetch.git"
+  },
+  "author": "kaivoanastetiks@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaivoanastetiks/kronos-wow-guild-fetch/issues"
+  },
+  "homepage": "https://github.com/kaivoanastetiks/kronos-wow-guild-fetch#readme",
+  "dependencies": {
+    "bluebird": "^3.1.1"
+  }
+}
