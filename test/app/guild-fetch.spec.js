@@ -3,7 +3,7 @@ var sinon = require('sinon');
 
 var Promise = require('_/app/node_modules/bluebird');
 
-var Guild = require('_/app/guild');
+var GuildFetch = require('_/app/guild-fetch');
 var Fetch = require('_/fetch');
 var GuildConnection = require('_/app/guild-connection');
 
@@ -15,11 +15,11 @@ var Activity = require('_/models/activity');
 const REALM = 'realm';
 const GUILD_NAME = 'guildName';
 
-describe('_/app/guild', function() {
+describe('_/app/guild-fetch', function() {
     describe('constuctor', function() {
         it('fails to instanciate if no realm string provided', function() {
             var closure = function() {
-                new Guild();
+                new GuildFetch();
             };
 
             expect(closure).to.throwError();
@@ -27,7 +27,7 @@ describe('_/app/guild', function() {
 
         it('fails to instanciate if no guildName string provided', function() {
             var closure = function() {
-                new Guild(REALM);
+                new GuildFetch(REALM);
             };
 
             expect(closure).to.throwError();
@@ -35,7 +35,7 @@ describe('_/app/guild', function() {
 
         it('fails to instanciate if no GuildConnection object provided', function() {
             var closure = function() {
-                new Guild(REALM, GUILD_NAME);
+                new GuildFetch(REALM, GUILD_NAME);
             };
 
             expect(closure).to.throwError();
@@ -68,40 +68,58 @@ describe('_/app/guild', function() {
         });
 
         it('fetches all the characters and save them when calling run', function() {
-            var guild = new Guild(REALM, GUILD_NAME, guildConnection);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
             guildConnectionMock.expects('saveCharacter').twice();
 
-            return guild.run().then(function() {
+            return guildFetch.run().then(function() {
                 expect(getCharactersStub.calledOnce).to.be(true);
                 guildConnectionMock.verify();
             });
         });
 
+        it('fetches all the characters and removes the one no longer present from the guild', function() {
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
+            guildConnectionMock.expects('cleanRemovedCharacters').once();
+
+            return guildFetch.run().then(function() {
+                guildConnectionMock.verify();
+            });
+        });
+
         it('fetches all the characters\' professions and save them when calling run', function() {
-            var guild = new Guild(REALM, GUILD_NAME, guildConnection);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
             guildConnectionMock.expects('saveProfession').exactly(4);
 
-            return guild.run().then(function() {
+            return guildFetch.run().then(function() {
                 expect(getProfessionsStub.calledTwice).to.be(true);
                 guildConnectionMock.verify();
             });
         });
 
+        it('fetches all the characters\' professions and removes the profession the characters no longer have', function() {
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
+            guildConnectionMock.expects('cleanRemovedProfessions').twice();
+
+            return guildFetch.run().then(function() {
+                guildConnectionMock.verify();
+            });
+        });
+
         it('fetches all the characters\' reputations and save them when calling run', function() {
-            var guild = new Guild(REALM, GUILD_NAME, guildConnection);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
             guildConnectionMock.expects('saveReputation').exactly(4);
 
-            return guild.run().then(function() {
+            return guildFetch.run().then(function() {
                 expect(getReputationsStub.calledTwice).to.be(true);
                 guildConnectionMock.verify();
             });
         });
 
         it('fetches all the characters\' activities and save them when calling run', function() {
-            var guild = new Guild(REALM, GUILD_NAME, guildConnection);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
             guildConnectionMock.expects('saveActivity').exactly(4);
 
-            return guild.run().then(function() {
+            return guildFetch.run().then(function() {
                 expect(getActivitiesStub.calledTwice).to.be(true);
                 guildConnectionMock.verify();
             });
