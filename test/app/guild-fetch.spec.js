@@ -5,7 +5,7 @@ var Promise = require('_/app/node_modules/bluebird');
 
 var GuildFetch = require('_/app/guild-fetch');
 var Fetch = require('_/fetch');
-var GuildConnection = require('_/app/guild-connection');
+var GuildRepository = require('_/app/guild-repository');
 
 var Character = require('_/models/character');
 var Profession = require('_/models/profession');
@@ -33,7 +33,7 @@ describe('_/app/guild-fetch', function() {
             expect(closure).to.throwError();
         });
 
-        it('fails to instanciate if no GuildConnection object provided', function() {
+        it('fails to instanciate if no GuildRepository object provided', function() {
             var closure = function() {
                 new GuildFetch(REALM, GUILD_NAME);
             };
@@ -47,16 +47,16 @@ describe('_/app/guild-fetch', function() {
         var getProfessionsStub;
         var getReputationsStub;
         var getActivitiesStub;
-        var guildConnection;
-        var guildConnectionStub;
+        var guildRepository;
+        var guildRepositoryStub;
 
         beforeEach(function() {
             getCharactersStub = stubGetCharacters();
             getProfessionsStub = stubGetProfessions();
             getReputationsStub = stubGetReputations();
             getActivitiesStub = stubGetActivities();
-            guildConnection = new GuildConnection();
-            guildConnectionMock = sinon.mock(guildConnection);
+            guildRepository = new GuildRepository();
+            guildRepositoryMock = sinon.mock(guildRepository);
         });
 
         afterEach(function() {
@@ -64,64 +64,64 @@ describe('_/app/guild-fetch', function() {
             getProfessionsStub.restore();
             getReputationsStub.restore();
             getActivitiesStub.restore();
-            guildConnectionMock.restore();
+            guildRepositoryMock.restore();
         });
 
         it('fetches all the characters and save them when calling run', function() {
-            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
-            guildConnectionMock.expects('saveCharacter').twice();
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildRepository);
+            guildRepositoryMock.expects('saveCharacter').twice();
 
             return guildFetch.run().then(function() {
                 expect(getCharactersStub.calledOnce).to.be(true);
-                guildConnectionMock.verify();
+                guildRepositoryMock.verify();
             });
         });
 
         it('fetches all the characters and removes the one no longer present from the guild', function() {
-            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
-            guildConnectionMock.expects('cleanRemovedCharacters').once();
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildRepository);
+            guildRepositoryMock.expects('cleanRemovedCharacters').once();
 
             return guildFetch.run().then(function() {
-                guildConnectionMock.verify();
+                guildRepositoryMock.verify();
             });
         });
 
         it('fetches all the characters\' professions and save them when calling run', function() {
-            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
-            guildConnectionMock.expects('saveProfession').exactly(4);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildRepository);
+            guildRepositoryMock.expects('saveProfession').exactly(4);
 
             return guildFetch.run().then(function() {
                 expect(getProfessionsStub.calledTwice).to.be(true);
-                guildConnectionMock.verify();
+                guildRepositoryMock.verify();
             });
         });
 
         it('fetches all the characters\' professions and removes the profession the characters no longer have', function() {
-            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
-            guildConnectionMock.expects('cleanRemovedProfessions').twice();
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildRepository);
+            guildRepositoryMock.expects('cleanRemovedProfessions').twice();
 
             return guildFetch.run().then(function() {
-                guildConnectionMock.verify();
+                guildRepositoryMock.verify();
             });
         });
 
         it('fetches all the characters\' reputations and save them when calling run', function() {
-            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
-            guildConnectionMock.expects('saveReputation').exactly(4);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildRepository);
+            guildRepositoryMock.expects('saveReputation').exactly(4);
 
             return guildFetch.run().then(function() {
                 expect(getReputationsStub.calledTwice).to.be(true);
-                guildConnectionMock.verify();
+                guildRepositoryMock.verify();
             });
         });
 
         it('fetches all the characters\' activities and save them when calling run', function() {
-            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildConnection);
-            guildConnectionMock.expects('saveActivity').exactly(4);
+            var guildFetch = new GuildFetch(REALM, GUILD_NAME, guildRepository);
+            guildRepositoryMock.expects('saveActivity').exactly(4);
 
             return guildFetch.run().then(function() {
                 expect(getActivitiesStub.calledTwice).to.be(true);
-                guildConnectionMock.verify();
+                guildRepositoryMock.verify();
             });
         });
     });
