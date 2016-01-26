@@ -1,6 +1,7 @@
 var expect = require('expect.js');
 var sinon = require('sinon');
 
+var Firebase = require('_/app/node_modules/firebase');
 var Promise = require('_/app/node_modules/bluebird');
 
 var GuildFetch = require('_/app/guild-fetch');
@@ -49,14 +50,21 @@ describe('_/app/guild-fetch', function() {
         var getActivitiesStub;
         var guildRepository;
         var guildRepositoryStub;
+        var firebase = { getAuth: function() { return true; } };
 
         beforeEach(function() {
             getCharactersStub = stubGetCharacters();
             getProfessionsStub = stubGetProfessions();
             getReputationsStub = stubGetReputations();
             getActivitiesStub = stubGetActivities();
-            guildRepository = new GuildRepository();
+            guildRepository = new GuildRepository(firebase);
             guildRepositoryMock = sinon.mock(guildRepository);
+            guildRepositoryMock.expects('saveCharacter').atLeast(0);
+            guildRepositoryMock.expects('cleanRemovedCharacters').atLeast(0);
+            guildRepositoryMock.expects('saveProfession').atLeast(0);
+            guildRepositoryMock.expects('cleanRemovedProfessions').atLeast(0);
+            guildRepositoryMock.expects('saveReputation').atLeast(0);
+            guildRepositoryMock.expects('saveActivity').atLeast(0);
         });
 
         afterEach(function() {
