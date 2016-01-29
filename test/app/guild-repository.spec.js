@@ -38,33 +38,74 @@ describe('_/app/guild-repository', function() {
             firebase = new Firebase(FIREBASE_URL);
             firebaseMock = sinon.mock(firebase);
             firebaseMock.expects('getAuth').returns(true);
+            firebaseMock.expects('child').atLeast(0).returns(firebase);
+            firebaseMock.expects('once').exactly(3)
+                .onCall(0).returns(Promise.resolve(getSavedCharacters()))
+                .onCall(1).returns(Promise.resolve(getSavedProfessions()))
+                .onCall(2).returns(Promise.resolve(getSavedReputations()));
+            firebaseMock.expects('remove').atLeast(0).returns(Promise.resolve(true));
+            firebaseMock.expects('set').atLeast(0).returns(Promise.resolve(true));
        });
 
         afterEach(function() {
             firebaseMock.restore();
         });
 
-        it('removes the characters from members that are in firebase but not in the provided list', function() {
+        it('removes the characters from characters that are in firebase but not in the provided list', function() {
             var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('members').returns(firebase);
-            firebaseMock.expects('once').once().withArgs('value').returns(Promise.resolve(getSavedCharacters()));
-            firebaseMock.expects('child').once().withArgs('members/characterTwo').returns(firebase);
-            firebaseMock.expects('child').withArgs('ex-members/characterTwo').returns(firebase);
-            firebaseMock.expects('remove').once().returns(Promise.resolve(true));
+            firebaseMock.expects('child').once().withArgs('characters').returns(firebase);
+            firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
 
             return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
                 firebaseMock.verify();
             });
         });
 
-        it('places the removed characters in ex-members', function() {
+        it('places the removed characters in ex-characters', function() {
             var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').withArgs('members').returns(firebase);
-            firebaseMock.expects('once').withArgs('value').returns(Promise.resolve(getSavedCharacters()));
-            firebaseMock.expects('child').withArgs('members/characterTwo').returns(firebase);
-            firebaseMock.expects('child').once().withArgs('ex-members/characterTwo').returns(firebase);
-            firebaseMock.expects('remove').once().returns(Promise.resolve(true));
-            firebaseMock.expects('set').once().withArgs(getSavedCharacters().val().characterTwo);
+            firebaseMock.expects('set').once().withArgs(getSavedCharacters().val().characterTwo).returns(Promise.resolve(true));
+
+            return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
+                firebaseMock.verify();
+            });
+        });
+
+        it('removes the professions of the ex-characters', function() {
+            var guildRepository = new GuildRepository(firebase);
+            firebaseMock.expects('child').once().withArgs('professions').returns(firebase);
+            firebaseMock.expects('child').once().withArgs('professions/mining/characterTwo').returns(firebase);
+            firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
+
+            return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
+                firebaseMock.verify();
+            });
+        });
+
+        it('removes the reputations of the ex-characters', function() {
+            var guildRepository = new GuildRepository(firebase);
+            firebaseMock.expects('child').once().withArgs('reputations').returns(firebase);
+            firebaseMock.expects('child').once().withArgs('reputations/stormwind/characterTwo').returns(firebase);
+            firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
+
+            return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
+                firebaseMock.verify();
+            });
+        });
+
+        it('removes the items of the ex-characters', function() {
+            var guildRepository = new GuildRepository(firebase);
+            firebaseMock.expects('child').once().withArgs('items/characterTwo').returns(firebase);
+            firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
+
+            return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
+                firebaseMock.verify();
+            });
+        });
+
+        it('removes the bosskills of the ex-characters', function() {
+            var guildRepository = new GuildRepository(firebase);
+            firebaseMock.expects('child').once().withArgs('bosskills/characterTwo').returns(firebase);
+            firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
 
             return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
                 firebaseMock.verify();
@@ -93,6 +134,42 @@ function getSavedCharacters() {
     };
 
     val.returns({ characterOne: characterOne, characterTwo: characterTwo });
+
+    return { val };
+}
+
+function getSavedProfessions() {
+    var val = sinon.stub();
+
+    var mining = {
+        characterOne: 300,
+        characterTwo: 300
+    };
+
+    var skinning = {
+        characterOne: 300,
+        characterTwo: 300
+    };
+
+    val.returns({ mining: mining, skinning: skinning });
+
+    return { val };
+}
+
+function getSavedReputations() {
+    var val = sinon.stub();
+
+    var stormwind = {
+        characterOne: 42000,
+        characterTwo: 21000
+    };
+
+    var ironforge = {
+        characterOne: 42000,
+        characterTwo: 21000
+    };
+
+    val.returns({ stormwind: stormwind, ironforge: ironforge });
 
     return { val };
 }
