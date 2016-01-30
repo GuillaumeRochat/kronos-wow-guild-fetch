@@ -1,6 +1,7 @@
 var expect = require('expect.js');
 var sinon = require('sinon');
 
+var moment = require('moment');
 var Promise = require('_/app/node_modules/bluebird');
 var Firebase = require('_/app/node_modules/firebase');
 var GuildRepository = require('_/app/guild-repository');
@@ -112,6 +113,42 @@ describe('_/app/guild-repository', function() {
             });
         });
     });
+
+    describe('saveCharacter', function() {
+        var firebase;
+        var firebaseMock;
+
+        beforeEach(function() {
+            firebase = new Firebase(FIREBASE_URL);
+            firebaseMock = sinon.mock(firebase);
+            firebaseMock.expects('getAuth').returns(true);
+            firebaseMock.expects('child').atLeast(0).returns(firebase);
+       });
+
+        afterEach(function() {
+            firebaseMock.restore();
+        });
+
+        it('adds a new character with the current date as date added', function() {
+            var guildRepository = new GuildRepository(firebase);
+            firebaseMock.expects('once').once().returns(Promise.resolve(getNewCharacterSavedPayload()));
+            firebaseMock.expects('set').once().withArgs(getNewCharacterToSavePayload()).returns(Promise.resolve(true));
+
+            return guildRepository.saveCharacter(getFetchedCharacters()[1]).then(function() {
+                firebaseMock.verify();
+            });
+        });
+
+        it('updates an existing character level, race and gender', function() {
+            var guildRepository = new GuildRepository(firebase);
+            firebaseMock.expects('once').once().returns(Promise.resolve(getExistingCharacterSavedPayload()));
+            firebaseMock.expects('update').once().withArgs(getExistingCharacterToUpdatePayload()).returns(Promise.resolve(true));
+
+            return guildRepository.saveCharacter(getFetchedCharacters()[0]).then(function() {
+                firebaseMock.verify();
+            });
+        });
+    });
 });
 
 function getSavedCharacters() {
@@ -183,6 +220,56 @@ function getFetchedCharacters() {
     characterOne.setLevel(60);
     characterOne.setGuildRank(0);
 
-    return [characterOne];
+    var characterThree = new Character();
+    characterThree.setName('characterThree');
+    characterThree.setClass('mage');
+    characterThree.setRace('gnome');
+    characterThree.setGender('male');
+    characterThree.setLevel(45);
+    characterThree.setGuildRank(2);
+
+    return [characterOne, characterThree];
 }
 
+function getNewCharacterToSavePayload() {
+    return {
+        class: 'mage',
+        race: 'gnome',
+        gender: 'male',
+        level: 45,
+        guildRank: 2,
+        dateAdded: moment.utc().format('YYYY-MM-DD')
+    };
+}
+
+function getNewCharacterSavedPayload() {
+    var val = sinon.stub();
+
+    val.returns(null);
+
+    return { val };
+}
+
+function getExistingCharacterToUpdatePayload() {
+    return {
+        class: 'warrior',
+        race: 'human',
+        gender: 'male',
+        level: 60,
+        guildRank: 0
+    };
+}
+
+function getExistingCharacterSavedPayload() {
+    var val = sinon.stub();
+
+    val.returns({
+        class: 'warrior',
+        race: 'human',
+        gender: 'male',
+        level: 60,
+        guildRank: 0
+    });
+
+    return { val };
+}
