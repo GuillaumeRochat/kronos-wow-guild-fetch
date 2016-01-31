@@ -99,13 +99,13 @@ describe('_/fetch/activities', function() {
         expect(activitiesData[0].get('characterName')).to.be(CHARACTER_NAME.toLowerCase());
     });
 
-    it('sets the bossKillID provided in the search in the model', function() {
+    it('sets the bosskillID provided in the search in the model', function() {
         var activities = new Activities(URL, REALM, CHARACTER_NAME);
 
         var activitiesData = activities.parse(REPLY);
 
-        expect(activitiesData[0].get('bossKillID')).to.be(123456);
-        expect(activitiesData[1].get('bossKillID')).to.be(null);
+        expect(activitiesData[0].get('bosskillID')).to.be(123456);
+        expect(activitiesData[1].get('bosskillID')).to.be(null);
     });
 
     it('sets the datetime from the node in the model in ISO-8601 UTC', function() {

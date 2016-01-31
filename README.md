@@ -24,7 +24,8 @@ The project will be placed in lib/ with individual modules for each logical part
 
 ##### lib/app/
 - index.js
-- guild.js
+- guild-fetch.js
+- guild-repository.js
 
 ## Data Fetch
 The data will be taken from those four pages, each returning XML with all the corresponding information.
@@ -47,31 +48,51 @@ The data placed in firebase will be as follow:
 ```
 {
     "Guild Name": {
-        "members": {
-            "charactername": { "level": "level", "timestamp": "timestamp" }
+        "characters": {
+            "charactername": {
+                "class": "warrior",
+                "race": "human",
+                "gender": 'male',
+                "level": 60,
+                "guildRank": 0,
+                "dateAdded": "1970-01-01"
+            }
         },
-        "ex-members": {
-            "charactername": { "level": "level", "timestamp": "timestamp" }
+        "ex-characters": {
+            "charactername": {
+                "class": "warrior",
+                "race": "human",
+                "gender": 'male',
+                "level": 60,
+                "guildRank": 0,
+                "dateAdded": "1970-01-01"
+            }
         }
         "professions": {
-            "profession 1": {
-                "charactername": "level"
+            "mining": {
+                "charactername": 300
             }
         },
         "reputation": {
-            "faction": {
-                "charactername": "reputation"
+            "stormwind": {
+                "charactername": 42000
             }
         },
         "items": {
-            "charactername": [{
-                "itemid": { "itemname": "itemname", "dateobtained": "dateobtained" }
-            }]
+            "charactername": {
+                "itemID": [
+                    "1970-01-01T00:00:00+00:00",
+                    "1970-01-02T00:00:00+00:00"
+                ]
+            }
         },
-        "bosskill": {
-            "charactername": [{
-                "bossid": { "bossname": "bossname", "datekilled": "datekilled" }
-            }]
+        "bosskills": {
+            "charactername": {
+                "bosskillID": {
+                    "bossID": "bossID"
+                    "dateKilled": "1970-01-01T00:00:00+00:00"
+                }
+            }
         }
     }
 }
