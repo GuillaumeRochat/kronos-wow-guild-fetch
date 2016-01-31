@@ -117,150 +117,117 @@ describe('_/app/guild-repository', function() {
         });
     });
 
-    describe('saveCharacter', function() {
-        var firebase;
-        var firebaseMock;
+    var firebase;
+    var firebaseMock;
 
-        beforeEach(function() {
-            firebase = new Firebase(FIREBASE_URL);
-            firebaseMock = sinon.mock(firebase);
-            firebaseMock.expects('getAuth').returns(true);
-            firebaseMock.expects('child').atLeast(0).returns(firebase);
-       });
+    beforeEach(function() {
+        firebase = new Firebase(FIREBASE_URL);
+        firebaseMock = sinon.mock(firebase);
+        firebaseMock.expects('getAuth').returns(true);
+        firebaseMock.expects('child').atLeast(0).returns(firebase);
+    });
 
-        afterEach(function() {
-            firebaseMock.restore();
-        });
+    afterEach(function() {
+        firebaseMock.restore();
+    });
 
-        it('adds a new character with the current date as date added', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
-            firebaseMock.expects('set').once().withArgs(getNewCharacterToSavePayload()).returns(Promise.resolve(true));
+    it('adds a new character with the current date as date added', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
+        firebaseMock.expects('set').once().withArgs(getNewCharacterToSavePayload()).returns(Promise.resolve(true));
 
-            return guildRepository.saveCharacter(getFetchedCharacters()[1]).then(function() {
-                firebaseMock.verify();
-            });
-        });
-
-        it('updates an existing character level, race and gender', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('once').once().returns(Promise.resolve(getExistingCharacterSavedPayload()));
-            firebaseMock.expects('update').once().withArgs(getExistingCharacterToUpdatePayload()).returns(Promise.resolve(true));
-
-            return guildRepository.saveCharacter(getFetchedCharacters()[0]).then(function() {
-                firebaseMock.verify();
-            });
+        return guildRepository.saveCharacter(getFetchedCharacters()[1]).then(function() {
+            firebaseMock.verify();
         });
     });
 
-    describe('saveProfession', function() {
-        var firebase;
-        var firebaseMock;
+    it('updates an existing character level, race and gender', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('once').once().returns(Promise.resolve(getExistingCharacterSavedPayload()));
+        firebaseMock.expects('update').once().withArgs(getExistingCharacterToUpdatePayload()).returns(Promise.resolve(true));
 
-        beforeEach(function() {
-            firebase = new Firebase(FIREBASE_URL);
-            firebaseMock = sinon.mock(firebase);
-            firebaseMock.expects('getAuth').returns(true);
-            firebaseMock.expects('child').atLeast(0).returns(firebase);
-        });
-
-        afterEach(function() {
-            firebaseMock.restore();
-        });
-
-        it('adds and updates professions', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('professions/mining/characterOne').returns(firebase);
-            firebaseMock.expects('set').once().withArgs(300).returns(Promise.resolve(true));
-
-            return guildRepository.saveProfession(getFetchedProfessions()[0]).then(function() {
-                firebaseMock.verify();
-            });
+        return guildRepository.saveCharacter(getFetchedCharacters()[0]).then(function() {
+            firebaseMock.verify();
         });
     });
 
-    describe('saveReputation', function() {
-        var firebase;
-        var firebaseMock;
 
-        beforeEach(function() {
-            firebase = new Firebase(FIREBASE_URL);
-            firebaseMock = sinon.mock(firebase);
-            firebaseMock.expects('getAuth').returns(true);
-            firebaseMock.expects('child').atLeast(0).returns(firebase);
-        });
+    it('adds and updates professions', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').once().withArgs('professions/mining/characterOne').returns(firebase);
+        firebaseMock.expects('set').once().withArgs(300).returns(Promise.resolve(true));
 
-        afterEach(function() {
-            firebaseMock.restore();
-        });
-
-        it('adds and updates reputations', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('reputations/stormwind/characterOne').returns(firebase);
-            firebaseMock.expects('set').once().withArgs(42000).returns(Promise.resolve(true));
-
-            return guildRepository.saveReputation(getFetchedReputations()[0]).then(function() {
-                firebaseMock.verify();
-            });
+        return guildRepository.saveProfession(getFetchedProfessions()[0]).then(function() {
+            firebaseMock.verify();
         });
     });
 
-    describe('saveActivity', function() {
-        var firebase;
-        var firebaseMock;
 
-        beforeEach(function() {
-            firebase = new Firebase(FIREBASE_URL);
-            firebaseMock = sinon.mock(firebase);
-            firebaseMock.expects('getAuth').returns(true);
-            firebaseMock.expects('child').atLeast(0).returns(firebase);
+    it('removes saved professions that the character no longer has', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').never().withArgs('professions/mining/characterOne').returns(firebase);
+        firebaseMock.expects('child').never().withArgs('professions/skinning/characterOne').returns(firebase);
+        firebaseMock.expects('child').once().withArgs('professions/herbalism/characterOne').returns(firebase);
+        firebaseMock.expects('once').atLeast(1).returns(Promise.resolve(getExistingProfessionSavedPayload()));
+        firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
+
+        return guildRepository.cleanRemovedProfessions(getFetchedProfessions()).then(function() {
+            firebaseMock.verify();
         });
+    });
 
-        afterEach(function() {
-            firebaseMock.restore();
+
+    it('adds and updates reputations', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').once().withArgs('reputations/stormwind/characterOne').returns(firebase);
+        firebaseMock.expects('set').once().withArgs(42000).returns(Promise.resolve(true));
+
+        return guildRepository.saveReputation(getFetchedReputations()[0]).then(function() {
+            firebaseMock.verify();
         });
+    });
 
-        it('adds new bosskill activities in bosskills', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('bosskills/characterOne/456').returns(firebase);
-            firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
-            firebaseMock.expects('set').once().withArgs(getNewBosskillsToPushPayload()).returns(Promise.resolve(true));
 
-            return guildRepository.saveActivity(getFetchedActivities()[0]).then(function() {
-                firebaseMock.verify();
-            });
+    it('adds new bosskill activities in bosskills', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').once().withArgs('bosskills/characterOne/456').returns(firebase);
+        firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
+        firebaseMock.expects('set').once().withArgs(getNewBosskillsToPushPayload()).returns(Promise.resolve(true));
+
+        return guildRepository.saveActivity(getFetchedActivities()[0]).then(function() {
+            firebaseMock.verify();
         });
+    });
 
-        it('does not set existing bosskill activities in bosskills', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('bosskills/characterOne/456').returns(firebase);
-            firebaseMock.expects('once').once().returns(Promise.resolve(getExistingBosskillSavedPayload()));
-            firebaseMock.expects('set').never();
+    it('does not set existing bosskill activities in bosskills', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').once().withArgs('bosskills/characterOne/456').returns(firebase);
+        firebaseMock.expects('once').once().returns(Promise.resolve(getExistingBosskillSavedPayload()));
+        firebaseMock.expects('set').never();
 
-            return guildRepository.saveActivity(getFetchedActivities()[0]).then(function() {
-                firebaseMock.verify();
-            });
+        return guildRepository.saveActivity(getFetchedActivities()[0]).then(function() {
+            firebaseMock.verify();
         });
+    });
 
-        it('pushes new item activities in items', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
-            firebaseMock.expects('push').once().withArgs('2015-12-31T00:00:00+00:00').returns(Promise.resolve(true));
+    it('pushes new item activities in items', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
+        firebaseMock.expects('push').once().withArgs('2015-12-31T00:00:00+00:00').returns(Promise.resolve(true));
 
-            return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
-                firebaseMock.verify();
-            });
+        return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
+            firebaseMock.verify();
         });
+    });
 
-        it('does not existing item activities in items', function() {
-            var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
-            firebaseMock.expects('once').once().returns(Promise.resolve(getExistingItemSavedPayload()));
-            firebaseMock.expects('push').never();
+    it('does not existing item activities in items', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
+        firebaseMock.expects('once').once().returns(Promise.resolve(getExistingItemSavedPayload()));
+        firebaseMock.expects('push').never();
 
-            return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
-                firebaseMock.verify();
-            });
+        return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
+            firebaseMock.verify();
         });
     });
 });
@@ -393,7 +360,21 @@ function getFetchedProfessions() {
     professionOne.setName('mining');
     professionOne.setCharacterName('characterOne');
     professionOne.setLevel(300);
-    return [professionOne];
+
+    var professionTwo = new Profession();
+    professionTwo.setName('skinning');
+    professionTwo.setCharacterName('characterOne');
+    professionTwo.setLevel(300);
+
+    return [professionOne, professionTwo];
+}
+
+function getExistingProfessionSavedPayload() {
+    var val = sinon.stub();
+
+    val.returns(300);
+
+    return { val };
 }
 
 function getFetchedReputations() {
