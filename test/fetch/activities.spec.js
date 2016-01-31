@@ -113,7 +113,7 @@ describe('_/fetch/activities', function() {
 
         var activitiesData = activities.parse(REPLY);
 
-        expect(activitiesData[0].get('datetime')).to.be('2015-12-31T11:12:12Z');
+        expect(activitiesData[0].get('datetime')).to.be('2015-12-31T11:12:12+00:00');
     });
 });
 

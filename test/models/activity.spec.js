@@ -59,10 +59,10 @@ describe('_/models/activity', function() {
         var iso = new Activity();
         var notIso = new Activity();
 
-        iso.setDatetime('1970-01-01T12:12:12Z');
+        iso.setDatetime('1970-01-01T12:12:12+00:00');
         notIso.setDatetime('70-01-01 12:12:12');
 
-        expect(iso.get('datetime')).to.be('1970-01-01T12:12:12Z');
+        expect(iso.get('datetime')).to.be('1970-01-01T12:12:12+00:00');
         expect(notIso.get('datetime')).to.be(null);
     });
 });
