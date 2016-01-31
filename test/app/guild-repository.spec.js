@@ -1,6 +1,7 @@
 var expect = require('expect.js');
 var sinon = require('sinon');
 
+var _ = require('lodash');
 var moment = require('moment');
 var Promise = require('_/app/node_modules/bluebird');
 var Firebase = require('_/app/node_modules/firebase');
@@ -67,7 +68,8 @@ describe('_/app/guild-repository', function() {
 
         it('places the removed characters in ex-characters', function() {
             var guildRepository = new GuildRepository(firebase);
-            firebaseMock.expects('set').once().withArgs(getSavedCharacters().val().characterTwo).returns(Promise.resolve(true));
+            var removedData = _.extend({ dateRemoved: moment.utc().format('YYYY-MM-DD') }, _.omit(getSavedCharacters().val().characterTwo, 'dateAdded'));
+            firebaseMock.expects('set').once().withArgs(removedData).returns(Promise.resolve(true));
 
             return guildRepository.cleanRemovedCharacters(getFetchedCharacters()).then(function() {
                 firebaseMock.verify();
@@ -213,7 +215,8 @@ describe('_/app/guild-repository', function() {
     it('pushes new item activities in items', function() {
         var guildRepository = new GuildRepository(firebase);
         firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
-        firebaseMock.expects('push').once().withArgs('2015-12-31T00:00:00+00:00').returns(Promise.resolve(true));
+        firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
+        firebaseMock.expects('set').once().withArgs(['2015-12-31T00:00:00+00:00']).returns(Promise.resolve(true));
 
         return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
             firebaseMock.verify();
@@ -225,6 +228,7 @@ describe('_/app/guild-repository', function() {
         firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
         firebaseMock.expects('once').once().returns(Promise.resolve(getExistingItemSavedPayload()));
         firebaseMock.expects('push').never();
+        firebaseMock.expects('set').never();
 
         return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
             firebaseMock.verify();
@@ -240,7 +244,8 @@ function getSavedCharacters() {
         race: 'human',
         gender: 'male',
         level: 60,
-        guildRank: 0
+        guildRank: 0,
+        dateAdded: '2015-12-31'
     };
 
     var characterTwo = {
@@ -248,7 +253,8 @@ function getSavedCharacters() {
         race: 'dwarf',
         gender: 'female',
         level: 30,
-        guildRank: 1
+        guildRank: 1,
+        dateAdded: '2015-12-31'
     };
 
     val.returns({ characterOne: characterOne, characterTwo: characterTwo });
