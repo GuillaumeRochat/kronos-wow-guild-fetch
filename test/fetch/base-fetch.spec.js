@@ -59,4 +59,15 @@ describe('_/fetch/base-fetch', function() {
             expect(response).to.be(REPLY);
         });
     });
+
+    it('throws exception if reply contains the errorhtml node', function() {
+        nock(URL).get('/error').reply(200, '<errorhtml/>');
+        var baseFetch = new BaseFetch(URL + '/error', REALM);
+
+        return baseFetch.fetch().then(function() {
+            expects().to.fail();
+        }).catch(function(error) {
+            return true;
+        });
+    });
 });

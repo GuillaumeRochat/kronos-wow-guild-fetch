@@ -171,7 +171,7 @@ describe('_/app/guild-repository', function() {
         firebaseMock.expects('once').atLeast(1).returns(Promise.resolve(getExistingProfessionSavedPayload()));
         firebaseMock.expects('remove').atLeast(1).returns(Promise.resolve(true));
 
-        return guildRepository.cleanRemovedProfessions(getFetchedProfessions()).then(function() {
+        return guildRepository.cleanRemovedProfessions('characterOne', getFetchedProfessions()).then(function() {
             firebaseMock.verify();
         });
     });
