@@ -18,9 +18,9 @@ describe('_/models/activity', function() {
         var intAbove = new Activity();
         var notInt = new Activity();
 
-        intBelow.setId(0);
-        intAbove.setId(1);
-        notInt.setId('id');
+        intBelow.setID(0);
+        intAbove.setID(1);
+        notInt.setID('id');
 
         expect(intBelow.get('id')).to.be(null);
         expect(intAbove.get('id')).to.be(1);
@@ -46,13 +46,13 @@ describe('_/models/activity', function() {
         var intAbove = new Activity();
         var notInt = new Activity();
 
-        intBelow.setBossKillID(0);
-        intAbove.setBossKillID(1);
-        notInt.setBossKillID('bossKillID');
+        intBelow.setBosskillID(0);
+        intAbove.setBosskillID(1);
+        notInt.setBosskillID('bosskillID');
 
-        expect(intBelow.get('bossKillID')).to.be(null);
-        expect(intAbove.get('bossKillID')).to.be(1);
-        expect(notInt.get('bossKillID')).to.be(null);
+        expect(intBelow.get('bosskillID')).to.be(null);
+        expect(intAbove.get('bosskillID')).to.be(1);
+        expect(notInt.get('bosskillID')).to.be(null);
     });
 
     it('sets the datime if valid ISO-8601 at UTC time', function() {
