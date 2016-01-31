@@ -114,6 +114,15 @@ describe('_/fetch/characters', function() {
         expect(charactersData[1].get('race')).to.be('orc');
     });
 
+    it('sets the character gender from the node in the model', function() {
+        var characters = new Characters(URL, REALM, GUILD_NAME);
+
+        var charactersData = characters.parse(REPLY);
+
+        expect(charactersData[0].get('gender')).to.be('male');
+        expect(charactersData[1].get('gender')).to.be('female');
+    });
+
     it('sets the character level from the node in the model', function() {
         var characters = new Characters(URL, REALM, GUILD_NAME);
 
