@@ -135,18 +135,38 @@ describe('_/app/guild-repository', function() {
 
     it('adds a new character with the current date as date added', function() {
         var guildRepository = new GuildRepository(firebase);
-        firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
+        firebaseMock.expects('once').twice()
+            .onCall(0).returns(Promise.resolve(getEmptyNodePayload()))
+            .onCall(1).returns(Promise.resolve(getEmptyNodePayload()));
         firebaseMock.expects('set').once().withArgs(getNewCharacterToSavePayload()).returns(Promise.resolve(true));
+        firebaseMock.expects('remove').never();
 
         return guildRepository.saveCharacter(getFetchedCharacters()[1]).then(function() {
             firebaseMock.verify();
         });
     });
 
+    it('removes the ex-character when the ex-character joins the guild again', function() {
+        var guildRepository = new GuildRepository(firebase);
+        firebaseMock.expects('once').twice()
+            .onCall(0).returns(Promise.resolve(getEmptyNodePayload()))
+            .onCall(1).returns(Promise.resolve(getExCharactersPayload()));
+        firebaseMock.expects('child').once().withArgs('ex-characters/characterOne').returns(firebase);
+        firebaseMock.expects('remove').once().returns(Promise.resolve(true));
+
+        return guildRepository.saveCharacter(getFetchedCharacters()[0]).then(function() {
+            firebaseMock.verify();
+        });
+
+    });
+
     it('updates an existing character level, race and gender', function() {
         var guildRepository = new GuildRepository(firebase);
-        firebaseMock.expects('once').once().returns(Promise.resolve(getExistingCharacterSavedPayload()));
+        firebaseMock.expects('once').twice()
+            .onCall(0).returns(Promise.resolve(getExistingCharacterSavedPayload()))
+            .onCall(1).returns(Promise.resolve(getEmptyNodePayload()));
         firebaseMock.expects('update').once().withArgs(getExistingCharacterToUpdatePayload()).returns(Promise.resolve(true));
+        firebaseMock.expects('remove').never();
 
         return guildRepository.saveCharacter(getFetchedCharacters()[0]).then(function() {
             firebaseMock.verify();
@@ -344,6 +364,20 @@ function getExistingCharacterToUpdatePayload() {
         level: 60,
         guildRank: 0
     };
+}
+
+function getExCharactersPayload() {
+    var val = sinon.stub();
+
+    val.returns({
+        class: 'warrior',
+        race: 'human',
+        gender: 'male',
+        level: 60,
+        guildRank: 0
+    });
+
+    return { val };
 }
 
 function getExistingCharacterSavedPayload() {
