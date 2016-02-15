@@ -232,7 +232,7 @@ describe('_/app/guild-repository', function() {
         });
     });
 
-    it('pushes new item activities in items', function() {
+    it('adds new item activities in items', function() {
         var guildRepository = new GuildRepository(firebase);
         firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
         firebaseMock.expects('once').once().returns(Promise.resolve(getEmptyNodePayload()));
@@ -243,11 +243,10 @@ describe('_/app/guild-repository', function() {
         });
     });
 
-    it('does not existing item activities in items', function() {
+    it('does not add existing item activities in items', function() {
         var guildRepository = new GuildRepository(firebase);
         firebaseMock.expects('child').once().withArgs('items/characterOne/123').returns(firebase);
         firebaseMock.expects('once').once().returns(Promise.resolve(getExistingItemSavedPayload()));
-        firebaseMock.expects('push').never();
         firebaseMock.expects('set').never();
 
         return guildRepository.saveActivity(getFetchedActivities()[1]).then(function() {
